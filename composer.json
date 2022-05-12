@@ -3,7 +3,6 @@
   "type": "library",
   "description": "Load theme scripts and stylesheets through configuration.",
   "license": "MIT",
-  "version": "0.1.0",
   "authors": [
     {
       "name": "Craig Simpson",
