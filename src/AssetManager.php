@@ -6,16 +6,6 @@ class AssetManager extends Component
 {
     const SCRIPTS = 'scripts';
     const STYLES = 'styles';
-    const HANDLE = 'handle';
-    const URL = 'src';
-    const DEPS = 'deps';
-    const VERSION = 'version';
-    const FOOTER = 'footer';
-    const MEDIA = 'media';
-    const ENQUEUE = 'enqueue';
-    const LOCALIZE = 'localize';
-    const LOCALIZED_VAR = 'l10var';
-    const LOCALIZED_DATA = 'l10ndata';
 
     public function init()
     {
@@ -34,15 +24,15 @@ class AssetManager extends Component
             $deps = $this->get_deps($asset);
             $version = $this->get_version($asset);
             $footer = $this->get_footer($asset);
-            $function = true === $asset[self::ENQUEUE] ? 'wp_enqueue_script' : 'wp_register_script';
+            $function = isset($asset[Asset::ENQUEUE]) && false === $asset[Asset::ENQUEUE] ? 'wp_register_script' : 'wp_enqueue_script';
 
             // Either enqueue or register the script.
-            $function($asset[self::HANDLE], $asset[self::URL], $deps, $version, $footer);
+            $function($asset[Asset::HANDLE], $asset[Asset::URL], $deps, $version, $footer);
 
-            if (array_key_exists(self::LOCALIZE, $asset)) {
-                $name = $asset[self::LOCALIZE][self::LOCALIZED_VAR];
-                $data = $asset[self::LOCALIZE][self::LOCALIZED_DATA];
-                wp_localize_script($asset[self::HANDLE], $name, $data);
+            if (array_key_exists(Asset::LOCALIZE, $asset)) {
+                $name = $asset[Asset::LOCALIZE][Asset::LOCALIZED_VAR];
+                $data = $asset[Asset::LOCALIZE][Asset::LOCALIZED_DATA];
+                wp_localize_script($asset[Asset::HANDLE], $name, $data);
             }
         }
     }
@@ -58,10 +48,10 @@ class AssetManager extends Component
             $deps = $this->get_deps($asset);
             $version = $this->get_version($asset);
             $media = $this->get_media($asset);
-            $function = true === $asset[self::ENQUEUE] ? 'wp_enqueue_style' : 'wp_register_style';
+            $function = isset($asset[Asset::ENQUEUE]) && false === $asset[Asset::ENQUEUE] ? 'wp_register_style' : 'wp_enqueue_style';
 
             // Either enqueue or register the stylesheet.
-            $function($asset[self::HANDLE], $asset[self::URL], $deps, $version, $media);
+            $function($asset[Asset::HANDLE], $asset[Asset::URL], $deps, $version, $media);
         }
     }
 
@@ -74,7 +64,7 @@ class AssetManager extends Component
      */
     protected function get_deps(array $asset): array
     {
-        return $asset[self::DEPS] ?? [];
+        return $asset[Asset::DEPS] ?? [];
     }
 
     /**
@@ -86,7 +76,7 @@ class AssetManager extends Component
      */
     protected function get_version(array $asset): bool|string
     {
-        return $asset[self::VERSION] ?? false;
+        return $asset[Asset::VERSION] ?? false;
     }
 
     /**
@@ -98,7 +88,7 @@ class AssetManager extends Component
      */
     protected function get_footer(array $asset): bool
     {
-        return $asset[self::FOOTER] ?? false;
+        return $asset[Asset::FOOTER] ?? false;
     }
 
     /**
@@ -110,6 +100,6 @@ class AssetManager extends Component
      */
     protected function get_media(array $asset): string
     {
-        return $asset[self::MEDIA] ?? 'all';
+        return $asset[Asset::MEDIA] ?? 'all';
     }
 }
